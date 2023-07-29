@@ -423,6 +423,11 @@ def run(star_name, data_dir, results_dir):
     # obtendo velocidade radial media
     median_rv, rv_err = get_median_rv(rvs_filename)
     print("Median RV: {}\n".format(median_rv))
+    
+    # corrigindo velocidade radial
+    c = 299792458
+    shift = waves_star * (median_rv/c)
+    waves_star = waves_star + shift
 
     # obtendo SNR medio do espectro da estrela entre os comp de onda ~ 5500 e 5501 A
     idx_ini, idx_end = find_index(waves_star, 5500), find_index(waves_star, 5501)
