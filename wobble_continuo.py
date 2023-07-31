@@ -30,6 +30,7 @@ import ctypes # integracao com C
 import pandas as pd
 from astropy.table import Table as tb
 from PyAstronomy import pyasl
+from astropy import constants as const
 
 # para tirar avisos do tensorflow
 import logging
@@ -41,9 +42,9 @@ tf.autograph.set_verbosity(3)
 
 # para plots
 import matplotlib as mpl
-mpl.rcParams['xtick.labelsize'] = 12
-mpl.rcParams['ytick.labelsize'] = 12
-mpl.rcParams['axes.labelsize'] = 14
+mpl.rcParams['xtick.labelsize'] = 22
+mpl.rcParams['ytick.labelsize'] = 22
+mpl.rcParams['axes.labelsize'] = 24
 mpl.rcParams['figure.figsize'] = (15.0, 5.0)
 
 def save_spec_csv(out_file_name, data):
@@ -124,10 +125,12 @@ def plot_spectrum(x, y, figname, star_name, tellurics=False):
         title = 'Tellurics - ' + star_name
     else:
         title = star_name
-    plt.title(title)
+    plt.title(title, fontsize=26)
+    plt.xlabel(r"$\lambda$ ($\AA$)")
+    plt.ylabel("Flux")
     plt.tight_layout()
     plt.savefig(figname)
-    plt.show()
+    #plt.show()
 
 
 def pre_process_data (star_name, data_dir, hdf5_file_processed_data):
@@ -143,7 +146,7 @@ def pre_process_data (star_name, data_dir, hdf5_file_processed_data):
     """
     # objeto do wobble para guardar os dados
     data = wobble.Data()
-
+    print(data_dir)
     filenames = glob.glob(data_dir + '/HARPS*_ccf_*')
 
     # se nao encontra os arquivos, para a execucao
@@ -397,6 +400,8 @@ def run(star_name, data_dir, results_dir):
     - results_dir: caminho para pasta dos resultados
     """
 
+    print("\n        --------------------------------\n        *** INICIANDO ESTRELA {} ***\n         --------------------------------\n".format(star_name))
+
     if not os.path.exists(results_dir):  # cria diretorio se nao existe
         os.makedirs(results_dir)
 
@@ -423,7 +428,7 @@ def run(star_name, data_dir, results_dir):
     # obtendo velocidade radial media
     median_rv, rv_err = get_median_rv(rvs_filename)
     print("Median RV: {}\n".format(median_rv))
-    
+
     # corrigindo velocidade radial
     c = 299792458
     shift = waves_star * (median_rv/c)
@@ -460,10 +465,10 @@ def main():
     data_dir = "/home/giumartos/Servidor/Files/Documents/Mestrado/Trabalho/wobble/Testes/" + star_name
 
     # diretorio para salvar os dados pre-processados e os resultados
-    results_dir = "/home/giumartos/Desktop/Teste_HD198075"
-
-    # rodando as correcoes
+    results_dir = "/home/giumartos/Servidor/Files/Documents/Mestrado/Trabalho/wobble/Teste_HD198075"
+    
     run(star_name, data_dir, results_dir)
+
 
 if __name__ == '__main__':
 
@@ -472,4 +477,4 @@ if __name__ == '__main__':
     c_lib = c_init(so_file)  # initialize the C library
 
     main()
-    
+ 
